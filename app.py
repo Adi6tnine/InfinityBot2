@@ -83,7 +83,7 @@ def index():
     """Render the main chat interface"""
     return render_template('index.html')
 
-@app.route('/api/chat', methods=['POST'])
+@app.route('/chat', methods=['POST'])
 def chat():
     """Process incoming chat messages"""
     data = request.json
@@ -91,7 +91,7 @@ def chat():
     
     if not user_message:
         return jsonify({
-            'message': 'Please enter a message',
+            'response': 'Please enter a message',
             'time': get_current_time()
         })
     
@@ -117,7 +117,7 @@ def chat():
                 'time': get_current_time()
             })
             return jsonify({
-                'message': bot_response,
+                'response': bot_response,
                 'time': get_current_time()
             })
     
@@ -132,7 +132,7 @@ def chat():
                 'time': get_current_time()
             })
             return jsonify({
-                'message': joke,
+                'response': joke,
                 'time': get_current_time()
             })
     
@@ -159,11 +159,11 @@ def chat():
         chat_history.pop(0)
     
     return jsonify({
-        'message': bot_response,
+        'response': bot_response,
         'time': get_current_time()
     })
 
-@app.route('/api/suggestions', methods=['GET'])
+@app.route('/get_suggestions', methods=['GET'])
 def get_suggestions():
     """Return a list of suggested prompts"""
     suggestions = [
@@ -177,10 +177,17 @@ def get_suggestions():
     ]
     return jsonify({'suggestions': suggestions})
 
-@app.route('/api/history', methods=['GET'])
+@app.route('/get_history', methods=['GET'])
 def get_history():
     """Return chat history"""
     return jsonify({'history': chat_history})
+
+@app.route('/clear_history', methods=['POST'])
+def clear_history():
+    """Clear chat history"""
+    global chat_history
+    chat_history = []
+    return jsonify({'status': 'success'})
 
 # Configure port for Render deployment
 if __name__ == '__main__':

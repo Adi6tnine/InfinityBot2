@@ -1,50 +1,67 @@
 document.addEventListener('DOMContentLoaded', function() {
     // DOM Elements
     const chatMessages = document.getElementById('chat-messages');
-    const messageForm = document.getElementById('message-form');
-    const messageInput = document.getElementById('message-input');
-    const sendButton = document.getElementById('send-button');
+    const chatForm = document.getElementById('chat-form');
+    const userInput = document.getElementById('user-input');
     const themeToggle = document.getElementById('theme-toggle');
-    const welcomeScreen = document.getElementById('welcome-screen');
-    const newChatButton = document.getElementById('new-chat');
-    const suggestions = document.querySelectorAll('.suggestion');
-    const typingIndicator = document.getElementById('typing-indicator');
+    const clearChatBtn = document.getElementById('clear-chat');
+    const suggestionChips = document.querySelectorAll('.suggestion-chip');
+    
+    // Set up particles.js
+    if (typeof particlesJS !== 'undefined') {
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 30, density: { enable: true, value_area: 800 } },
+                color: { value: '#6c5ce7' },
+                shape: { type: 'circle' },
+                opacity: { value: 0.3, random: true },
+                size: { value: 3, random: true },
+                line_linked: { enable: true, distance: 150, color: '#6c5ce7', opacity: 0.2, width: 1 },
+                move: { enable: true, speed: 2, direction: 'none', random: true, straight: false, out_mode: 'out' }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {
+                    onhover: { enable: true, mode: 'grab' },
+                    onclick: { enable: true, mode: 'push' },
+                    resize: true
+                },
+                modes: {
+                    grab: { distance: 140, line_linked: { opacity: 0.5 } },
+                    push: { particles_nb: 4 }
+                }
+            },
+            retina_detect: true
+        });
+    }
     
     // Variables
-    let isFirstMessage = true;
     let typingTimeout;
     
-    // Initialize theme from local storage or default to dark mode
+    // Theme Toggle
     function initializeTheme() {
         const savedTheme = localStorage.getItem('theme') || 'dark';
-        document.body.className = savedTheme + '-mode';
-        themeToggle.checked = savedTheme === 'dark';
+        document.documentElement.setAttribute('data-bs-theme', savedTheme);
+        updateThemeIcon(savedTheme === 'dark');
     }
     
-    // Toggle theme between light and dark
-    function toggleTheme() {
-        const isDarkMode = themeToggle.checked;
-        const newTheme = isDarkMode ? 'dark' : 'light';
-        document.body.className = newTheme + '-mode';
+    function updateThemeIcon(isDark) {
+        const themeIcon = themeToggle.querySelector('i');
+        if (isDark) {
+            themeIcon.className = 'fas fa-sun';
+        } else {
+            themeIcon.className = 'fas fa-moon';
+        }
+    }
+    
+    themeToggle.addEventListener('click', function() {
+        const currentTheme = document.documentElement.getAttribute('data-bs-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        document.documentElement.setAttribute('data-bs-theme', newTheme);
         localStorage.setItem('theme', newTheme);
-    }
-    
-    // Auto-resize textarea as user types
-    function autoResizeTextarea() {
-        messageInput.style.height = 'auto';
-        messageInput.style.height = (messageInput.scrollHeight > 200 ? 200 : messageInput.scrollHeight) + 'px';
-    }
-    
-    // Show typing indicator
-    function showTypingIndicator() {
-        typingIndicator.classList.remove('hidden');
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-    
-    // Hide typing indicator
-    function hideTypingIndicator() {
-        typingIndicator.classList.add('hidden');
-    }
+        updateThemeIcon(newTheme === 'dark');
+    });
     
     // Format message content (handle markdown-like formatting)
     function formatMessageContent(content) {
@@ -66,26 +83,72 @@ document.addEventListener('DOMContentLoaded', function() {
         return formatted;
     }
     
+    // Add welcome message
+    function addWelcomeMessage() {
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const messageHtml = `
+            <div class="message bot-message">
+                <div class="message-bubble bot-bubble">
+                    <div>Hello! I'm Infinity AI, your personal assistant. How can I help you today?</div>
+                    <div class="message-time">${time}</div>
+                </div>
+            </div>
+        `;
+        chatMessages.innerHTML = messageHtml;
+    }
+    
     // Add a message to the chat
     function addMessage(content, isUser, time) {
-        // Hide welcome screen if visible
-        if (isFirstMessage) {
-            welcomeScreen.style.display = 'none';
-            isFirstMessage = false;
-        }
-        
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
         
         const formattedContent = isUser ? content : formatMessageContent(content);
         
         messageDiv.innerHTML = `
-            <div class="message-content">${formattedContent}</div>
-            <div class="message-time">${time}</div>
+            <div class="message-bubble ${isUser ? 'user-bubble' : 'bot-bubble'}">
+                <div>${formattedContent}</div>
+                <div class="message-time">${time}</div>
+            </div>
         `;
         
         chatMessages.appendChild(messageDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+        scrollToBottom();
+    }
+    
+    function scrollToBottom() {
+        const chatContainer = document.getElementById('chat-container');
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+    
+    // Show typing indicator
+    function showTypingIndicator() {
+        const typingDiv = document.createElement('div');
+        typingDiv.id = 'typing-indicator';
+        typingDiv.className = 'message bot-message';
+        typingDiv.innerHTML = `
+            <div class="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        `;
+        
+        // Remove existing typing indicator if any
+        const existingIndicator = document.getElementById('typing-indicator');
+        if (existingIndicator) {
+            existingIndicator.remove();
+        }
+        
+        chatMessages.appendChild(typingDiv);
+        scrollToBottom();
+    }
+    
+    // Hide typing indicator
+    function hideTypingIndicator() {
+        const typingIndicator = document.getElementById('typing-indicator');
+        if (typingIndicator) {
+            typingIndicator.remove();
+        }
     }
     
     // Simulate typing effect for bot messages
@@ -97,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const messageLength = message.length;
         const calculatedTime = Math.max(minTypingTime, messageLength * typingSpeed);
         
-        // Cap typing time to be between 500ms and it 3.5s
+        // Cap typing time to be between 500ms and 3.5s
         const typingTime = Math.min(3500, calculatedTime);
         
         showTypingIndicator();
@@ -117,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Send a message to the server and get a response
     async function sendMessage(message) {
         try {
-            const response = await fetch('/api/chat', {
+            const response = await fetch('/chat', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -130,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             const data = await response.json();
-            simulateTyping(data.message, data.time);
+            simulateTyping(data.response, new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
         } catch (error) {
             console.error('Error sending message:', error);
             hideTypingIndicator();
@@ -141,135 +204,75 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load chat history if available
     async function loadChatHistory() {
         try {
-            const response = await fetch('/api/history');
+            const response = await fetch('/get_history');
             if (!response.ok) {
-                return; // If no history or error, just continue with empty chat
-            }
-            
-            const data = await response.json();
-            if (data.history && data.history.length > 0) {
-                // Hide welcome screen
-                welcomeScreen.style.display = 'none';
-                isFirstMessage = false;
-                
-                // Add messages from history
-                data.history.forEach(message => {
-                    addMessage(message.content, message.role === 'user', message.time);
-                });
-            }
-        } catch (error) {
-            console.error('Error loading chat history:', error);
-        }
-    }
-    
-    // Start a new chat
-    function startNewChat() {
-        // Clear chat messages
-        chatMessages.innerHTML = '';
-        
-        // Show welcome screen
-        welcomeScreen.style.display = 'flex';
-        isFirstMessage = true;
-        
-        // Clear input field
-        messageInput.value = '';
-        autoResizeTextarea();
-    }
-    
-    // Load suggestions
-    async function loadSuggestions() {
-        try {
-            const response = await fetch('/api/suggestions');
-            if (!response.ok) {
+                // If no history, add welcome message
+                addWelcomeMessage();
                 return;
             }
             
             const data = await response.json();
-            if (data.suggestions && data.suggestions.length > 0) {
-                // Update the suggestions with the ones from the server
-                const suggestionsContainer = document.querySelector('.suggestions');
-                suggestionsContainer.innerHTML = '';
-                
-                data.suggestions.forEach(suggestion => {
-                    const div = document.createElement('div');
-                    div.className = 'suggestion';
-                    div.dataset.text = suggestion;
-                    
-                    // Add icon based on suggestion content
-                    let icon = 'fas fa-comment';
-                    if (suggestion.toLowerCase().includes('joke')) {
-                        icon = 'far fa-laugh';
-                    } else if (suggestion.toLowerCase().includes('time')) {
-                        icon = 'far fa-clock';
-                    } else if (suggestion.toLowerCase().includes('artificial intelligence')) {
-                        icon = 'fas fa-robot';
-                    } else if (suggestion.toLowerCase().includes('india')) {
-                        icon = 'fas fa-info-circle';
-                    } else if (suggestion.toLowerCase().includes('solar')) {
-                        icon = 'fas fa-sun';
-                    } else if (suggestion.toLowerCase().includes('quantum')) {
-                        icon = 'fas fa-microchip';
-                    } else if (suggestion.toLowerCase().includes('cities') || suggestion.toLowerCase().includes('europe')) {
-                        icon = 'fas fa-globe-europe';
-                    }
-                    
-                    div.innerHTML = `<i class="${icon}"></i> ${suggestion}`;
-                    div.addEventListener('click', function() {
-                        messageInput.value = this.dataset.text;
-                        messageForm.dispatchEvent(new Event('submit'));
-                    });
-                    
-                    suggestionsContainer.appendChild(div);
+            if (data.history && data.history.length > 0) {
+                // Add messages from history
+                data.history.forEach(message => {
+                    addMessage(message.content, message.role === 'user', message.time);
                 });
+            } else {
+                // Add welcome message if no history
+                addWelcomeMessage();
             }
         } catch (error) {
-            console.error('Error loading suggestions:', error);
+            console.error('Error loading chat history:', error);
+            addWelcomeMessage();
         }
     }
     
+    // Clear chat history
+    function clearChat() {
+        chatMessages.innerHTML = '';
+        addWelcomeMessage();
+        
+        // Send request to clear history on the server
+        fetch('/clear_history', { method: 'POST' })
+            .catch(error => console.error('Error clearing chat history:', error));
+    }
+    
     // Event Listeners
-    themeToggle.addEventListener('change', toggleTheme);
-    
-    messageInput.addEventListener('input', autoResizeTextarea);
-    
-    messageForm.addEventListener('submit', function(e) {
+    chatForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        const message = messageInput.value.trim();
+        const message = userInput.value.trim();
         if (!message) return;
         
         const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         addMessage(message, true, time);
         
-        messageInput.value = '';
-        autoResizeTextarea();
+        userInput.value = '';
         
         sendMessage(message);
     });
     
-    newChatButton.addEventListener('click', startNewChat);
+    clearChatBtn.addEventListener('click', clearChat);
     
-    // Setup suggestion clicks
-    suggestions.forEach(suggestion => {
-        suggestion.addEventListener('click', function() {
-            messageInput.value = this.dataset.text;
-            messageForm.dispatchEvent(new Event('submit'));
+    // Setup suggestion chips
+    suggestionChips.forEach(chip => {
+        chip.addEventListener('click', function() {
+            userInput.value = this.dataset.query;
+            chatForm.dispatchEvent(new Event('submit'));
         });
     });
     
-    // Press Enter to send message, Shift+Enter for new line
-    messageInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
+    // Press Enter to send message (no Shift+Enter needed for single-line input)
+    userInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
             e.preventDefault();
-            if (messageInput.value.trim()) {
-                messageForm.dispatchEvent(new Event('submit'));
+            if (userInput.value.trim()) {
+                chatForm.dispatchEvent(new Event('submit'));
             }
         }
     });
     
     // Initialize
     initializeTheme();
-    autoResizeTextarea();
     loadChatHistory();
-    loadSuggestions();
 });
