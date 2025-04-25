@@ -90,18 +90,21 @@ body {
 /* Sidebar Styles */
 .sidebar {
     width: 260px;
+    min-width: 260px;
     background-color: var(--sidebar-bg);
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    transition: all 0.3s ease;
-    position: relative;
-    z-index: 10;
+    transition: transform 0.3s ease;
 }
 
 .sidebar-hidden {
+    transform: translateX(-100%);
     margin-left: -260px;
+    position: absolute;
+    height: 100%;
+    z-index: -1;
 }
 
 .chat-main {
@@ -110,10 +113,11 @@ body {
     flex-direction: column;
     background-color: var(--body-bg);
     overflow: hidden;
-    transition: all 0.3s ease;
+    transition: margin-left 0.3s ease;
 }
 
 .chat-main-full {
+    margin-left: 0;
     width: 100%;
 }
 

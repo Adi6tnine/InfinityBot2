@@ -40,35 +40,51 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Toggle sidebar visibility
     function toggleSidebar() {
-        // Toggle the sidebar class
-        sidebar.classList.toggle('sidebar-hidden');
+        // Get DOM elements
+        const sidebar = document.querySelector('.sidebar');
+        const chatMain = document.querySelector('.chat-main');
         
-        // Get the chat main element and add or remove the full width class
-        document.querySelector('.chat-main').classList.toggle('chat-main-full');
-        
-        // Update the icon for toggle button
-        const icon = toggleSidebarBtn.querySelector('i');
+        // Toggle the sidebar visibility
         if (sidebar.classList.contains('sidebar-hidden')) {
-            icon.className = 'fas fa-expand';
-            toggleSidebarBtn.setAttribute('title', 'Show sidebar');
-        } else {
-            icon.className = 'fas fa-bars';
+            // Show sidebar
+            sidebar.classList.remove('sidebar-hidden');
+            chatMain.classList.remove('chat-main-full');
+            toggleSidebarBtn.querySelector('i').className = 'fas fa-bars';
             toggleSidebarBtn.setAttribute('title', 'Hide sidebar');
+            localStorage.setItem('sidebar-visible', 'true');
+        } else {
+            // Hide sidebar
+            sidebar.classList.add('sidebar-hidden');
+            chatMain.classList.add('chat-main-full');
+            toggleSidebarBtn.querySelector('i').className = 'fas fa-expand';
+            toggleSidebarBtn.setAttribute('title', 'Show sidebar');
+            localStorage.setItem('sidebar-visible', 'false');
         }
         
-        // Save preference in localStorage
-        localStorage.setItem('sidebar-visible', !sidebar.classList.contains('sidebar-hidden'));
-        
-        // Force a window resize event to re-render the UI properly
-        window.dispatchEvent(new Event('resize'));
+        // Force a reflow
+        setTimeout(() => {
+            window.dispatchEvent(new Event('resize'));
+        }, 300);
     }
     
     // Initialize sidebar state from localStorage
     function initializeSidebar() {
         const sidebarVisible = localStorage.getItem('sidebar-visible');
-        // Default to visible sidebar if no preference saved
+        const sidebar = document.querySelector('.sidebar');
+        const chatMain = document.querySelector('.chat-main');
+        
+        // If user previously set sidebar to hidden, hide it now
         if (sidebarVisible === 'false') {
-            toggleSidebar();
+            sidebar.classList.add('sidebar-hidden');
+            chatMain.classList.add('chat-main-full');
+            toggleSidebarBtn.querySelector('i').className = 'fas fa-expand';
+            toggleSidebarBtn.setAttribute('title', 'Show sidebar');
+        } else {
+            // Default is visible sidebar
+            sidebar.classList.remove('sidebar-hidden');
+            chatMain.classList.remove('chat-main-full');
+            toggleSidebarBtn.querySelector('i').className = 'fas fa-bars';
+            toggleSidebarBtn.setAttribute('title', 'Hide sidebar');
         }
     }
     
