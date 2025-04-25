@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const userInput = document.getElementById('user-input');
     const themeToggle = document.getElementById('theme-toggle');
     const clearChatBtn = document.getElementById('clear-chat');
-    const newChatBtn = document.getElementById('new-chat');
+    const chatHistoryBtn = document.getElementById('chat-history-btn');
     const toggleSidebarBtn = document.getElementById('toggle-sidebar');
     const sidebar = document.querySelector('.sidebar');
     const chatMain = document.querySelector('.chat-main');
@@ -308,9 +308,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Clear chat history button
     clearChatBtn.addEventListener('click', clearChat);
     
-    // New chat button (same as clear chat for now)
-    if (newChatBtn) {
-        newChatBtn.addEventListener('click', clearChat);
+    // Chat history button (same as clear chat for now)
+    if (chatHistoryBtn) {
+        chatHistoryBtn.addEventListener('click', clearChat);
     }
     
     // Press Enter to send message (no Shift+Enter needed for single-line input)
