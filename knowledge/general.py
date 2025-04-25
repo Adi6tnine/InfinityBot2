@@ -22,7 +22,11 @@ knowledge = {
     "good afternoon": "Good afternoon! What can I help you with today?",
     "good evening": "Good evening! How may I assist you tonight?",
     "favorite color": "As an AI, I don't have personal preferences, but I find all colors fascinating in their own way!",
-    "infinity": "Infinity represents something without any limit, and is often denoted by the symbol ∞. The concept is used in mathematics, physics, and philosophy to describe sequences, series, and other concepts that are boundless."
+    "infinity": "Infinity represents something without any limit, and is often denoted by the symbol ∞. The concept is used in mathematics, physics, and philosophy to describe sequences, series, and other concepts that are boundless.",
+    "who made you": "I was created by ADARSH. He designed and developed me to be a smart AI assistant that can help answer questions and provide information.",
+    "who is your creator": "My creator is ADARSH. He designed and built me to assist users with information and answers.",
+    "who created you": "I was created by ADARSH. He's the brilliant mind behind my development and capabilities.",
+    "your developer": "I was developed by ADARSH, who built me to be a helpful AI assistant."
 }
 
 def get_response(query):

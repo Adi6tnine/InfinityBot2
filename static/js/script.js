@@ -5,19 +5,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const userInput = document.getElementById('user-input');
     const themeToggle = document.getElementById('theme-toggle');
     const clearChatBtn = document.getElementById('clear-chat');
-    const suggestionChips = document.querySelectorAll('.suggestion-chip');
+    const newChatBtn = document.getElementById('new-chat');
     
     // Set up particles.js
     if (typeof particlesJS !== 'undefined') {
         particlesJS('particles-js', {
             particles: {
-                number: { value: 30, density: { enable: true, value_area: 800 } },
+                number: { value: 20, density: { enable: true, value_area: 800 } },
                 color: { value: '#6c5ce7' },
                 shape: { type: 'circle' },
                 opacity: { value: 0.3, random: true },
                 size: { value: 3, random: true },
                 line_linked: { enable: true, distance: 150, color: '#6c5ce7', opacity: 0.2, width: 1 },
-                move: { enable: true, speed: 2, direction: 'none', random: true, straight: false, out_mode: 'out' }
+                move: { enable: true, speed: 1.5, direction: 'none', random: true, straight: false, out_mode: 'out' }
             },
             interactivity: {
                 detect_on: 'canvas',
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 modes: {
                     grab: { distance: 140, line_linked: { opacity: 0.5 } },
-                    push: { particles_nb: 4 }
+                    push: { particles_nb: 3 }
                 }
             },
             retina_detect: true
@@ -48,9 +48,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateThemeIcon(isDark) {
         const themeIcon = themeToggle.querySelector('i');
         if (isDark) {
-            themeIcon.className = 'fas fa-sun';
+            themeIcon.className = 'fas fa-sun me-2';
         } else {
-            themeIcon.className = 'fas fa-moon';
+            themeIcon.className = 'fas fa-moon me-2';
         }
     }
     
@@ -252,15 +252,13 @@ document.addEventListener('DOMContentLoaded', function() {
         sendMessage(message);
     });
     
+    // Clear chat history button
     clearChatBtn.addEventListener('click', clearChat);
     
-    // Setup suggestion chips
-    suggestionChips.forEach(chip => {
-        chip.addEventListener('click', function() {
-            userInput.value = this.dataset.query;
-            chatForm.dispatchEvent(new Event('submit'));
-        });
-    });
+    // New chat button (same as clear chat for now)
+    if (newChatBtn) {
+        newChatBtn.addEventListener('click', clearChat);
+    }
     
     // Press Enter to send message (no Shift+Enter needed for single-line input)
     userInput.addEventListener('keydown', function(e) {
@@ -271,6 +269,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+
+    // Focus the input field on page load
+    userInput.focus();
     
     // Initialize
     initializeTheme();
