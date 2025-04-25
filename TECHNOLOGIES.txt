@@ -1,0 +1,65 @@
+INFINITY AI CHATBOT - TECHNOLOGIES USED
+========================================
+
+OVERVIEW
+--------
+Infinity AI is a ChatGPT-like chatbot built with Python and Flask that provides an elegant user interface with both offline knowledge base functionality and web search capabilities. It works completely offline with the option to search the web when needed, without requiring any external paid APIs like OpenAI's.
+
+BACKEND TECHNOLOGIES
+-------------------
+1. Python 3 - Core programming language
+2. Flask - Lightweight web framework
+3. Gunicorn - WSGI HTTP Server for production deployment
+4. Flask-SQLAlchemy - ORM for potential future database extensions
+
+WEB SCRAPING & SEARCH LIBRARIES
+------------------------------
+1. Trafilatura - Extracts clean text content from HTML websites
+2. BeautifulSoup4 - HTML parsing and data extraction
+3. Requests - HTTP library for making web requests
+4. Wikipedia - Python library for accessing Wikipedia content
+5. Email-validator - For validating email addresses (for future authentication)
+
+FRONTEND TECHNOLOGIES
+--------------------
+1. HTML5 - Structure
+2. CSS3 - Styling and animations
+3. JavaScript (ES6+) - Client-side functionality
+4. Font Awesome - Icon library
+5. Google Fonts (Poppins) - Typography
+6. Particles.js - Background particle animation effects
+
+ARCHITECTURE & DESIGN
+--------------------
+1. Modular Knowledge System:
+   - Organized in separate Python modules by domain (science, geography, etc.)
+   - Easy to extend with new knowledge domains
+
+2. Web Search Fallback:
+   - Wikipedia search with Python's Wikipedia library
+   - General web search with HTML scraping via BeautifulSoup and Trafilatura
+
+3. UI Features:
+   - Modern ChatGPT-like interface
+   - Dark/light theme toggle
+   - Collapsible sidebar
+   - Responsive design (works on mobile and desktop)
+   - Typing animation for more natural interactions
+   - Chat history persistence
+
+HOW IT WORKS
+-----------
+1. User sends a message through the web interface
+2. Flask backend processes the message
+3. System checks knowledge modules for a matching response
+4. If no match, falls back to web search using Wikipedia or general web scraping
+5. Response is sent back and displayed with a typing animation
+
+DEPLOYMENT REQUIREMENTS
+---------------------
+1. Deployable on Render.com free tier
+2. Uses Gunicorn as the WSGI server
+3. No external API keys required
+4. Minimal server requirements
+
+CREATED BY: ADARSH (INFINITY AI V1.0.0)

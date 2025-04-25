@@ -98,6 +98,15 @@ body {
     transition: var(--transition);
 }
 
+.sidebar-hidden {
+    margin-left: -260px;
+}
+
+.chat-main-full {
+    margin-left: -260px;
+    width: calc(100% + 260px);
+}
+
 .sidebar-header {
     padding: 16px;
     border-bottom: 1px solid var(--border-color);

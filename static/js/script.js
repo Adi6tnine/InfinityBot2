@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const themeToggle = document.getElementById('theme-toggle');
     const clearChatBtn = document.getElementById('clear-chat');
     const newChatBtn = document.getElementById('new-chat');
+    const toggleSidebarBtn = document.getElementById('toggle-sidebar');
+    const sidebar = document.querySelector('.sidebar');
+    const chatMain = document.querySelector('.chat-main');
     
     // Set up particles.js
     if (typeof particlesJS !== 'undefined') {
@@ -33,6 +36,32 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             retina_detect: true
         });
+    }
+    
+    // Toggle sidebar visibility
+    function toggleSidebar() {
+        sidebar.classList.toggle('sidebar-hidden');
+        chatMain.classList.toggle('chat-main-full');
+        
+        // Update the icon for toggle button
+        const icon = toggleSidebarBtn.querySelector('i');
+        if (sidebar.classList.contains('sidebar-hidden')) {
+            icon.className = 'fas fa-expand';
+        } else {
+            icon.className = 'fas fa-bars';
+        }
+        
+        // Save preference in localStorage
+        localStorage.setItem('sidebar-visible', !sidebar.classList.contains('sidebar-hidden'));
+    }
+    
+    // Initialize sidebar state from localStorage
+    function initializeSidebar() {
+        const sidebarVisible = localStorage.getItem('sidebar-visible');
+        // Default to visible sidebar if no preference saved
+        if (sidebarVisible === 'false') {
+            toggleSidebar();
+        }
     }
     
     // Variables
@@ -273,7 +302,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Focus the input field on page load
     userInput.focus();
     
+    // Toggle sidebar button
+    if (toggleSidebarBtn) {
+        toggleSidebarBtn.addEventListener('click', toggleSidebar);
+    }
+    
     // Initialize
     initializeTheme();
+    initializeSidebar();
     loadChatHistory();
 });
