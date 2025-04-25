@@ -40,19 +40,27 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Toggle sidebar visibility
     function toggleSidebar() {
+        // Toggle the sidebar class
         sidebar.classList.toggle('sidebar-hidden');
-        chatMain.classList.toggle('chat-main-full');
+        
+        // Get the chat main element and add or remove the full width class
+        document.querySelector('.chat-main').classList.toggle('chat-main-full');
         
         // Update the icon for toggle button
         const icon = toggleSidebarBtn.querySelector('i');
         if (sidebar.classList.contains('sidebar-hidden')) {
             icon.className = 'fas fa-expand';
+            toggleSidebarBtn.setAttribute('title', 'Show sidebar');
         } else {
             icon.className = 'fas fa-bars';
+            toggleSidebarBtn.setAttribute('title', 'Hide sidebar');
         }
         
         // Save preference in localStorage
         localStorage.setItem('sidebar-visible', !sidebar.classList.contains('sidebar-hidden'));
+        
+        // Force a window resize event to re-render the UI properly
+        window.dispatchEvent(new Event('resize'));
     }
     
     // Initialize sidebar state from localStorage

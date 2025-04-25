@@ -95,16 +95,26 @@ body {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    transition: var(--transition);
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 10;
 }
 
 .sidebar-hidden {
     margin-left: -260px;
 }
 
+.chat-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--body-bg);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
 .chat-main-full {
-    margin-left: -260px;
-    width: calc(100% + 260px);
+    width: 100%;
 }
 
 .sidebar-header {
@@ -215,13 +225,6 @@ body {
 }
 
 /* Main Chat Area */
-.chat-main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    background-color: var(--body-bg);
-    overflow: hidden;
-}
 
 .chat-header {
     display: flex;
@@ -490,22 +493,29 @@ pre {
 /* Responsive styles */
 @media (max-width: 768px) {
     .chat-layout {
-        flex-direction: column;
+        flex-direction: row;
     }
     
     .sidebar {
-        width: 100%;
-        height: auto;
-        max-height: 200px;
+        position: absolute;
+        width: 260px;
+        height: 100%;
+        z-index: 100;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
     }
     
-    .sidebar-content {
-        display: none;
+    .sidebar-hidden {
+        margin-left: -260px;
+        box-shadow: none;
     }
     
     .chat-main {
-        height: 0;
-        flex: 1;
+        width: 100%;
+        margin-left: 0;
+    }
+    
+    .chat-main-full {
+        width: 100%;
     }
     
     .chat-header {
@@ -522,5 +532,10 @@ pre {
     
     .message-bubble {
         max-width: 90%;
+    }
+    
+    #toggle-sidebar {
+        display: flex;
+        margin-right: 12px;
     }
 }
