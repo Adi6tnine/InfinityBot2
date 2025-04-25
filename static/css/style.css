@@ -112,6 +112,10 @@ body {
 
 .sidebar-hidden {
     margin-left: -280px;
+    width: 0;
+    min-width: 0;
+    overflow: hidden;
+    display: none;
 }
 
 .chat-main {
@@ -125,7 +129,8 @@ body {
 }
 
 .chat-main-full {
-    width: 100%;
+    width: 100% !important;
+    margin-left: 0 !important;
 }
 
 .sidebar-header {
@@ -533,10 +538,11 @@ pre {
     }
     
     .sidebar-hidden {
-        width: 0;
-        min-width: 0;
-        margin-left: -300px;
-        box-shadow: none;
+        width: 0 !important;
+        min-width: 0 !important;
+        margin-left: -300px !important;
+        box-shadow: none !important;
+        display: none;
     }
     
     .chat-main {

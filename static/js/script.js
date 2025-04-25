@@ -308,9 +308,115 @@ document.addEventListener('DOMContentLoaded', function() {
     // Clear chat history button
     clearChatBtn.addEventListener('click', clearChat);
     
-    // Chat history button (same as clear chat for now)
+    // Chat history button should toggle the chat history view
     if (chatHistoryBtn) {
-        chatHistoryBtn.addEventListener('click', clearChat);
+        chatHistoryBtn.addEventListener('click', function() {
+            // Toggle chat history display
+            const chatHistoryDiv = document.querySelector('.chat-history');
+            if (chatHistoryDiv) {
+                // First, fetch the latest chat history
+                fetch('/get_history')
+                    .then(response => response.json())
+                    .then(data => {
+                        // Clear previous history items
+                        chatHistoryDiv.innerHTML = '';
+                        
+                        if (data.history && data.history.length > 0) {
+                            // Group messages by conversation
+                            const conversations = [];
+                            let currentConvo = [];
+                            
+                            data.history.forEach((msg, index) => {
+                                currentConvo.push(msg);
+                                
+                                // If this is a bot message and there's no next message or next message is from user,
+                                // consider this the end of a conversation
+                                if (msg.role === 'assistant' && 
+                                    (index === data.history.length - 1 || 
+                                     data.history[index + 1].role === 'user')) {
+                                    conversations.push([...currentConvo]);
+                                    currentConvo = [];
+                                }
+                            });
+                            
+                            // If there's anything left in currentConvo, add it
+                            if (currentConvo.length > 0) {
+                                conversations.push(currentConvo);
+                            }
+                            
+                            // Create history items for each conversation (showing just the first exchange)
+                            conversations.forEach((convo, i) => {
+                                if (convo.length > 0) {
+                                    // Find first user message
+                                    const userMsg = convo.find(msg => msg.role === 'user');
+                                    if (userMsg) {
+                                        const historyItem = document.createElement('div');
+                                        historyItem.className = 'history-item';
+                                        historyItem.innerHTML = `
+                                            <div class="history-item-content">
+                                                <i class="fas fa-comment-alt"></i>
+                                                <span>${userMsg.content.substring(0, 30)}${userMsg.content.length > 30 ? '...' : ''}</span>
+                                            </div>
+                                        `;
+                                        
+                                        // Add click event to load this conversation
+                                        historyItem.addEventListener('click', function() {
+                                            // Clear current chat and load this conversation
+                                            chatMessages.innerHTML = '';
+                                            
+                                            // Add all messages from this conversation
+                                            convo.forEach(msg => {
+                                                addMessage(msg.content, msg.role === 'user', msg.time);
+                                            });
+                                            
+                                            // If on mobile, close the sidebar
+                                            if (window.innerWidth <= 768) {
+                                                toggleSidebar();
+                                            }
+                                        });
+                                        
+                                        chatHistoryDiv.appendChild(historyItem);
+                                    }
+                                }
+                            });
+                            
+                            // Add a style element for history items if it doesn't exist
+                            if (!document.getElementById('history-style')) {
+                                const style = document.createElement('style');
+                                style.id = 'history-style';
+                                style.textContent = `
+                                    .history-item {
+                                        padding: 10px;
+                                        border-radius: var(--border-radius);
+                                        background-color: var(--sidebar-hover);
+                                        margin-bottom: 8px;
+                                        cursor: pointer;
+                                        transition: var(--transition);
+                                    }
+                                    .history-item:hover {
+                                        background-color: var(--button-hover);
+                                    }
+                                    .history-item-content {
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 10px;
+                                    }
+                                    .history-item-content i {
+                                        color: var(--primary-color);
+                                    }
+                                `;
+                                document.head.appendChild(style);
+                            }
+                        } else {
+                            chatHistoryDiv.innerHTML = '<div class="no-history">No chat history yet</div>';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading chat history:', error);
+                        chatHistoryDiv.innerHTML = '<div class="no-history">Error loading chat history</div>';
+                    });
+            }
+        });
     }
     
     // Press Enter to send message (no Shift+Enter needed for single-line input)
